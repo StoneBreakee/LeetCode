@@ -24,22 +24,12 @@
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public int[] countBits(int num) {
+        // 动态规划的解法
+        // x 从右向左 依次去除为1的位 x = x & (x - 1)
+        // dp[x] = dp[x去除从右向左去除1个为1的位的数值] + 1
         int[] dptable = new int[num + 1];
-        int[] bits = new int[num];
-        dptable[0] = 0;
-        int cur = 1;
-        int onecount = 0;
-        while (cur <= num) {
-            int start = 0;
-            bits[start] += 1;
-            onecount += 1;
-            while(bits[start] == 2){
-                onecount--;
-                bits[start] = 0;
-                bits[start+1] += 1;
-                start++;
-            }
-            dptable[cur++] = onecount;
+        for (int i = 1; i <= num; i++) {
+            dptable[i] = dptable[i & (i - 1)] + 1;
         }
         return dptable;
     }
