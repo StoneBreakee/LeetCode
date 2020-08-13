@@ -25,14 +25,21 @@
 class Solution {
     public int[] countBits(int num) {
         int[] dptable = new int[num + 1];
+        int[] bits = new int[num];
         dptable[0] = 0;
-        int count = 1;
-        while (count <= num) {
-            char[] arr = Integer.toBinaryString(count).toCharArray();
-            for (char c : arr) {
-                dptable[count] += c == '1' ? 1 : 0;
+        int cur = 1;
+        int onecount = 0;
+        while (cur <= num) {
+            int start = 0;
+            bits[start] += 1;
+            onecount += 1;
+            while(bits[start] == 2){
+                onecount--;
+                bits[start] = 0;
+                bits[start+1] += 1;
+                start++;
             }
-            count++;
+            dptable[cur++] = onecount;
         }
         return dptable;
     }
