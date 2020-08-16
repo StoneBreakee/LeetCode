@@ -15,43 +15,17 @@ import java.util.Set;
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
-    private int count = 0;
-
     public int countNumbersWithUniqueDigits(int n) {
-        if (n == 0) {
-            return 1;
+        // 动态规划
+        // f(3) = f2 + 9 * 9 * 8
+        if (n == 0) return 1;
+        int first = 10, second = 9 * 9;
+        int size = Math.min(n, 10);
+        for (int i = 2; i <= size; i++) {
+            first += second;
+            second *= 10 - i;
         }
-        if (n > 10) {
-            n = 10;
-        }
-        int[] arr = new int[n];
-        dfs(0, arr, n);
-        return count;
-    }
-
-    private void dfs(int n, int[] arr, int target) {
-        // n之前的有效数字
-        int j = 0;
-        while (j < n && arr[j] == 0) {
-            j++;
-        }
-        Set<Integer> set = new HashSet<>();
-        for (int i = j; i < n; i++) {
-            set.add(arr[i]);
-        }
-
-        if (n == target - 1) {
-            count += 10 - set.size();
-            return;
-        }
-
-        for (int i = 0; i <= 9; i++) {
-            if (set.contains(i)) {
-                continue;
-            }
-            arr[n] = i;
-            dfs(n + 1, arr, target);
-        }
+        return first;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
