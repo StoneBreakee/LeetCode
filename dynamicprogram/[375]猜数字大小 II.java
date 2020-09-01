@@ -29,29 +29,33 @@
  * 如果要猜的数字是5
  * 先猜2 再猜4 则可猜出5 代价是 6
  * 如果是二分法则是 猜3 猜4 最后到5 代价是3+4 = 7
- *
- * */
+ * <p>
+ * 动态规划
+ * 1 2 3 4 5
+ * 1 = 1 + {2,3,4,5}
+ * 2 = 2 + max{min{1}，min{3,4,5}} 找出3，4，5所有数字花费最小
+ * 3 = 3 + max{min{1,2},min{4,5}}
+ * 4 = 4 + max{min{1,2,3},min{5}}
+ * 5 = 5 + [1,2,3,4]
+ * 在上面的所有值中，求出最小的一个
+ * <p>
+ * https://www.youtube.com/watch?v=VfJPDNG0nYM
+ */
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public int getMoneyAmount(int n) {
-        int low = 1, high = n;
-        int target = n;
-        int count = 0;
-        while (low <= high) {
-            int mid = (low + high) >> 1;
-            if (mid == target) {
-                break;
-            } else {
-                count += mid;
-                if (mid > target) {
-                    high = mid - 1;
-                } else {
-                    low = mid + 1;
+        int[][] dptable = new int[n + 1][n + 1];
+        for (int len = 2; len <= n; len++) {
+            for (int i = 1; i <= n - len + 1; i++) {
+                int j = i + len - 1;
+                dptable[i][j] = Integer.MAX_VALUE;
+                for (int k = i; k < j; k++) {
+                    dptable[i][j] = Math.min(dptable[i][j], k + Math.max(dptable[i][k - 1], dptable[k + 1][j]));
                 }
             }
         }
-        return count;
+        return dptable[1][n];
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
