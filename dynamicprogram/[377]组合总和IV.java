@@ -32,27 +32,21 @@
 
 // leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
-    // 暴力回溯
+    /**
+     * 动态规划 i 属于[1,target],dp[i] 表示组成当前值有所少种方法
+     */
     public int combinationSum4(int[] nums, int target) {
-        int count = 0;
-        for (int i = 0; i < nums.length; i++) {
-            count += calculateCombinationSum(nums, i, target - nums[i]);
-        }
-        return count;
-    }
-
-    private int calculateCombinationSum(int[] nums, int i, int target) {
-        if (target == 0) {
-            return 1;
-        }
-        int count = 0;
-        for (int j = 0; j < nums.length; j++) {
-            // 去除不满足的情况
-            if (target - nums[j] >= 0) {
-                count += calculateCombinationSum(nums, j, target - nums[j]);
+        int[] dptable = new int[target + 1];
+        dptable[0] = 1;
+        // 应为可以重复，所以将nums放入循环体内
+        for (int i = 1; i <= target; i++) {
+            for (int coin : nums) {
+                if (i >= coin) {
+                    dptable[i] += dptable[i - coin];
+                }
             }
         }
-        return count;
+        return dptable[target];
     }
 }
 // leetcode submit region end(Prohibit modification and deletion)
