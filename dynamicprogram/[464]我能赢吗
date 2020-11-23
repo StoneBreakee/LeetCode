@@ -41,36 +41,36 @@ class Solution {
     public boolean canIWin(int maxChoosableInteger, int desiredTotal) {
         if (maxChoosableInteger >= desiredTotal)
             return true;
-        if ((1 + maxChoosableInteger) * maxChoosableInteger / 2 < desiredTotal)
+        if (maxChoosableInteger * (maxChoosableInteger + 1) / 2 < desiredTotal)
             return false;
-        int[] state = new int[maxChoosableInteger + 1];
-        HashMap<String, Boolean> map = new HashMap<>();
-        return canWin(state, desiredTotal, map);
+        // 排除 0000...0
+        Boolean[] dp = new Boolean[(1 << maxChoosableInteger) - 1];
+        return canWin(maxChoosableInteger, desiredTotal, 0, dp);
     }
 
-    private boolean canWin(int[] state, int desiredTotal, HashMap<String, Boolean> map) {
-        String key = Arrays.toString(state);
-        if (map.containsKey(key)) {
-            return map.get(key);
+    /**
+     * 状态压缩
+     *
+     */
+    private boolean canWin(int maxChoosableInteger, int desiredTotal, int state, Boolean[] dp) {
+        if (dp[state] != null) {
+            return dp[state];
         }
-        for (int i = 1; i < state.length; i++) {
-            if(state[i] == 0){
-                // 当前选手先手选择i
-                state[i] = 1;
-                // 后续选手 在desiredTotal = desiredTotal - i，state = state - {i}的情况下能否稳赢
-                // 如果能够稳赢即canWin 为 true ，则当前选手就lose
-                // 如果不能稳赢即 canWin 为false，则当前选手就success
-                if(desiredTotal - i <= 0 || !canWin(state,desiredTotal - i,map)){
-                    // 无论哪个选手走到当前state的情况，都可以稳赢
-                    // 记录该情况，以便后续遇到该情况不必再次计算
-                    map.put(key,true);
-                    state[i] = 0;
+        for (int i = 1; i <= maxChoosableInteger; i++) {
+            int tmp = (1 << (i - 1));
+            // 该数没有被选中过
+            if ((tmp & state) == 0) {
+                // state 是值传递，所以每次进入到下一层，并没有改变本层的state的值
+                // 因此不用像使用 数组记录被选中的数字的状态 去动态维护 state的值
+                if (desiredTotal - i <= 0 || !canWin(maxChoosableInteger, desiredTotal - i, tmp | state, dp)) {
+                    // 如果当前玩家选择 i 后，剩余的情况 下一玩家稳输，则证明当前玩家选择i后稳赢
+                    dp[state] = true;
                     return true;
                 }
-                state[i] = 0;
             }
         }
-        map.put(key,false);
+        // 如果for循环执行完成还没有返回，说明当前玩家稳输
+        dp[state] = false;
         return false;
     }
 }
