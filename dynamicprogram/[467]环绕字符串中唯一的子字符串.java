@@ -40,40 +40,33 @@
 // Related Topics 动态规划
 // 👍 112 👎 0
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
 // leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     /**
-     * 前缀和的概念
-     * zab 可以 组成的 子数组的个数 z,a,b,az,ab,zab
-     * 以每一个字母为结尾，z
-     *                    a,za
-     *                    b,ab,zab
-     *  当前字母结尾的数组个数取决于前一个字母结尾的个数 + 1
-     *  dp[i] = dp[i-1] + 1
-     * */
+     * 优化方向，26个英文字母是固定的 无需使用map，使用长度为26的数组也可以
+     *
+     */
     public int findSubstringInWraproundString(String p) {
         if (p.length() <= 0)
             return p.length();
-        Map<Character, Integer> dict = new HashMap<Character, Integer>(26);
-        dict.put(p.charAt(0),1);
+        int[] dict = new int[26];
+        dict[p.charAt(0) - 'a'] = 1;
         int len = 1;
         for (int i = 1; i < p.length(); i++) {
-            int gap = p.charAt(i) - p.charAt(i - 1);
+            int currentChar = p.charAt(i);
+            int gap = currentChar - p.charAt(i - 1);
             if (gap == 1 || gap == 'a' - 'z') {
+                // dp[i] = dp[i-1] + 1
                 len++;
             } else {
                 len = 1;
             }
-            int count = dict.getOrDefault(p.charAt(i),0);
-            dict.put(p.charAt(i),Math.max(count,len));
+            dict[currentChar - 'a'] = Math.max(dict[currentChar - 'a'], len);
         }
+        // 所有子数组的总和
         int sum = 0;
-        for(Integer integer:dict.values()){
-            sum += integer;
+        for(int i:dict){
+            sum += i;
         }
         return sum;
     }
