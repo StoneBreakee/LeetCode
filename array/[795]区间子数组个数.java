@@ -23,30 +23,23 @@
 // leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public int numSubarrayBoundedMax(int[] A, int L, int R) {
-        int len = 0;
-        int sum = len;
+        int sum = 0;
+        int len = 0, lastNumIndex = -1;
         for (int i = 0; i < A.length; i++) {
-            if (A[i] <= R) {
-                len++;
-                if (A[i] >= L) {
-                    sum += len;
-                } else {
-                    int count = 0, backIndex = i;
-                    while (backIndex >= 0) {
-                        if (A[backIndex] >= L && A[backIndex] <= R) {
-                            break;
-                        }
-                        backIndex--;
-                        count++;
-                    }
-                    if (count > len || backIndex == -1) {
-                        continue;
-                    } else {
-                        sum += len - count;
-                    }
-                }
-            } else if (A[i] > R) {
+            if (A[i] > R) {
                 len = 0;
+                lastNumIndex = -1;
+                continue;
+            }
+            len++;
+            if (A[i] >= L) {
+                sum += len;
+                lastNumIndex = i;
+                continue;
+            }
+            // A[i] < L
+            if (i - lastNumIndex + 1 <= len) {
+                sum += len - (i - lastNumIndex);
             }
         }
         return sum;
