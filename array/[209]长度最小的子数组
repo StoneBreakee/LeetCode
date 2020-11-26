@@ -1,0 +1,28 @@
+class Solution {
+    public int minSubArrayLen(int s, int[] nums) {
+        int left = 0, right = 0;
+        int sum = 0;
+        int result = nums.length + 1;
+        while (right < nums.length) {
+            if (nums[right] >= s) {
+                return 1;
+            }
+            sum += nums[right];
+            if (sum < s) {
+                right++;
+            } else if (sum == s) {
+                result = Math.min(right - left + 1, result);
+                left++;
+                sum -= nums[left];
+                right++;
+            } else {
+                while (sum >= s) {
+                    result = Math.min(right - left + 1, result);
+                    sum -= nums[left++];
+                }
+                right++;
+            }
+        }
+        return result == nums.length + 1 ? 0 : result;
+    }
+}
