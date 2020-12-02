@@ -44,40 +44,27 @@ import java.util.Map;
 
 // leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
-    private Map<String, int[]> dict;
 
     public int findMaxForm(String[] strs, int m, int n) {
-        int max = 0;
-        if (strs.length == 0) {
-            return max;
+        // 背包问题的演化
+        // dp[i][j] 表示i个0，j个1的最大子集个数
+        // eles 中的每个元素只能使用一次
+        int[][] dp = new int[m + 1][n + 1];
+        for (int k = 0; k < strs.length; k++) {
+            int[] eles = new int[2];
+            eles[0] = strs[k].replaceAll("1", "").length();
+            eles[1] = strs[k].replaceAll("0", "").length();
+            // 倒序遍历，如果正序赋值会造成结果的包含重复的情况
+            // “01” 在超过i=1,j=1之后，dp[i][j]的结果相当于重复利用了“01”
+            for (int i = m; i >= 0; i--) {
+                for (int j = n; j >= 0; j--) {
+                    if (i >= eles[0] && j >= eles[1]) {
+                        dp[i][j] = Math.max(dp[i][j], dp[i - eles[0]][j - eles[1]] + 1);
+                    }
+                }
+            }
         }
-        dict = new HashMap<>(strs.length);
-        for (String str : strs) {
-            int zero = str.replaceAll("1", "").length();
-            int one = str.replaceAll("0", "").length();
-            dict.put(str, new int[] {zero, one});
-        }
-        int zero = dict.get(strs[0])[0];
-        int one = dict.get(strs[0])[1];
-        max = Math.max(findMaxFormPerEle(strs, 1, m, n), max);
-        if (m - zero >= 0 && n - one >= 0) {
-            max = Math.max(findMaxFormPerEle(strs, 1, m - zero, n - one) + 1, max);
-        }
-        return max;
-    }
-
-    private int findMaxFormPerEle(String[] strs, int i, int m, int n) {
-        int max = 0;
-        if (i == strs.length) {
-            return max;
-        }
-        int zero = dict.get(strs[i])[0];
-        int one = dict.get(strs[i])[1];
-        max = Math.max(findMaxFormPerEle(strs, i + 1, m, n), max);
-        if (m - zero >= 0 && n - one >= 0) {
-            max = Math.max(findMaxFormPerEle(strs, i + 1, m - zero, n - one) + 1, max);
-        }
-        return max;
+        return dp[m][n];
     }
 }
 // leetcode submit region end(Prohibit modification and deletion)
