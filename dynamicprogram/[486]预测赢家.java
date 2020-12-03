@@ -48,52 +48,25 @@ class Solution {
         if (nums.length <= 1) {
             return true;
         }
-        int[] dp = new int[nums.length];
-        HashMap<String, Boolean> map = new HashMap<>();
-        return predictTheWinner(nums, dp, 0, dp.length - 1, map, 1);
+        return predictTheWinner(nums, 0, nums.length - 1, 1) >= 0;
     }
 
-    private boolean predictTheWinner(int[] nums, int[] dp, int start, int end, HashMap<String, Boolean> map,
-        int currentUser) {
-        String key = Arrays.toString(dp);
-        if (map.containsKey(key)) {
-            return map.get(key);
+    // 返回当前选手在首端和末端后，最自己最有利的数字
+    // turn 表示当前是哪个选手 1 表示先手的选手 -1 表示后手的选手
+    private int predictTheWinner(int[] nums, int start, int end, int turn) {
+        if (start == end) {
+            return nums[start] * turn;
         }
-        if (start < end) {
-            dp[start] = currentUser;
-            boolean flag;
-            // 如果当前情况下，对手能赢
-            flag = predictTheWinner(nums, dp, start + 1, end, map, currentUser * -1);
-            dp[start] = 0;
-            if (flag) {
-                dp[end] = currentUser;
-                // 再判断下取另外一端，如果对手也是赢，则当前选手稳输
-                flag = predictTheWinner(nums, dp, start, end - 1, map, currentUser * -1);
-                dp[end] = 0;
-            }
-            // 如果不论取哪一端，当前选手稳输
-            if (flag) {
-                map.put(Arrays.toString(dp), false);
-                return false;
-            }
-            map.put(Arrays.toString(dp), true);
-            return true;
+        // 选择首端的情况
+        int left = nums[start] * turn + predictTheWinner(nums, start + 1, end, -turn);
+        // 选择末端的情况
+        int right = nums[end] * turn + predictTheWinner(nums, start, end - 1, -turn);
+        // 如果是正数，则越大越好
+        // 如果是负数，则越小越好
+        if (turn == 1) {
+            return left > right ? left : right;
         } else {
-            dp[start] = currentUser;
-            long first = 0, second = 0;
-            for (int i = 0; i < dp.length; i++) {
-                if (dp[i] == 1) {
-                    first += nums[i];
-                } else {
-                    second += nums[i];
-                }
-            }
-            dp[start] = 0;
-            if (currentUser == 1) {
-                return first - second >= 0;
-            } else {
-                return second - first > 0;
-            }
+            return left > right ? right : left;
         }
     }
 }
