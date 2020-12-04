@@ -42,32 +42,25 @@ import java.util.HashMap;
 // leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public boolean PredictTheWinner(int[] nums) {
-        // 当前选手
-        // 可选的情况 start,end
-        // 结束标志 first >= second && start == end
-        if (nums.length <= 1) {
-            return true;
+        // 如何自下向上的考虑这个问题
+        // 计算到最后，肯定是在两个数据或者一个数据中选择一个数字 i = nums.length - 2
+        // 以最小单位自下向上依次计算每个可能的组合
+        // dp[i][j] 表示当前选手在i 至 j的区间内选择首尾两端的某个数字后，取得的最大值
+        // 如果i > j,则dp[i][j] = 0
+        // 如果 i = j ,则 dp[i][j] = nums[i]
+        int len = nums.length;
+        int[][] dp = new int[len][len];
+        for (int i = 0; i < len; i++) {
+            dp[i][i] = nums[i];
         }
-        return predictTheWinner(nums, 0, nums.length - 1, 1) >= 0;
-    }
-
-    // 返回当前选手在首端和末端后，最自己最有利的数字
-    // turn 表示当前是哪个选手 1 表示先手的选手 -1 表示后手的选手
-    private int predictTheWinner(int[] nums, int start, int end, int turn) {
-        if (start == end) {
-            return nums[start] * turn;
+        for (int i = len - 2; i >= 0; i--) {
+            for (int j = i + 1; j < len; j++) {
+                int left = nums[i] - dp[i + 1][j];
+                int right = nums[j] - dp[i][j - 1];
+                dp[i][j] = left > right ? left : right;
+            }
         }
-        // 选择首端的情况
-        int left = nums[start] * turn + predictTheWinner(nums, start + 1, end, -turn);
-        // 选择末端的情况
-        int right = nums[end] * turn + predictTheWinner(nums, start, end - 1, -turn);
-        // 如果是正数，则越大越好
-        // 如果是负数，则越小越好
-        if (turn == 1) {
-            return left > right ? left : right;
-        } else {
-            return left > right ? right : left;
-        }
+        return dp[0][len - 1] >= 0;
     }
 }
 // leetcode submit region end(Prohibit modification and deletion)
