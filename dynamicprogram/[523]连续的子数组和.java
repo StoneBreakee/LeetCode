@@ -34,17 +34,12 @@ class Solution {
         if (nums.length <= 1) {
             return false;
         }
-        int[][] dp = new int[nums.length][nums.length];
+        int[] dp = new int[nums.length];
         for (int i = 0; i < nums.length; i++) {
-            dp[i][i] = nums[i];
-        }
-        for (int i = 0; i < nums.length; i++) {
+            dp[i] = nums[i];
             for (int j = i + 1; j < nums.length; j++) {
-                dp[i][j] = dp[i][j - 1] + nums[j];
-                if (k == 0 && dp[i][j] == 0) {
-                    return true;
-                }
-                if (k != 0 && dp[i][j] % k == 0) {
+                dp[j] = dp[j - 1] + nums[j];
+                if ((k == 0 && dp[j] == 0) || (k != 0 && dp[j] % k == 0)) {
                     return true;
                 }
             }
