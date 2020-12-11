@@ -20,12 +20,22 @@
 // leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public int[] twoSum(int[] numbers, int target) {
-        int left = 0, right = numbers.length - 1;
+       int left = 0, right = numbers.length - 1;
         while (left < right) {
-            int result = numbers[left] + numbers[right] - target;
-            if (result > 0) {
+            int mid = (left + right) >> 1;
+            // 范围减半
+            if (numbers[mid] + numbers[left] > target) {
+                right = mid - 1;
+                continue;
+            }
+            if (numbers[mid] + numbers[right] < target) {
+                left = mid + 1;
+                continue;
+            }
+            int res = numbers[left] + numbers[right];
+            if (res > target) {
                 right--;
-            } else if (result < 0) {
+            } else if (res < target) {
                 left++;
             } else {
                 break;
