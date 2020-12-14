@@ -18,34 +18,32 @@
 // leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public String longestPalindrome(String s) {
-        if (s.length() < 0) {
-            return "";
-        }
+        // 使用中心扩散法
+        // 注意奇数和偶数的情况
         int len = s.length();
-        char[] arr = new char[len];
+        char[] arr = s.toCharArray();
+        int max = 0, start = 0, end = 0;
+        int len1, len2;
         for (int i = 0; i < len; i++) {
-            arr[i] = s.charAt(len - i - 1);
-        }
-        boolean[][] dp = new boolean[len][len];
-        int max = 1, left = 0;
-        for (int i = len - 1; i >= 0; i--) {
-            dp[i][i] = true;
-            for (int j = i + 1; j < len; j++) {
-                if (arr[i] == arr[j]) {
-                    dp[i][j] = i > j - 2 || dp[i + 1][j - 1];
-                } else {
-                    dp[i][j] = false;
-                }
-                if (dp[i][j]) {
-                    int tmp = j - i + 1;
-                    if (max < tmp) {
-                        max = tmp;
-                        left = i;
-                    }
-                }
+            len1 = palindSpread(arr, i, i);
+            len2 = palindSpread(arr, i, i + 1);
+            max = len1 > len2 ? len1 : len2;
+            if (max > end - start) {
+                // start 为什么这么算？
+                start = i - (max - 1) / 2;
+                // end 为什么这么算？
+                end = start + max;
             }
         }
-        return new String(arr, left, max);
+        return s.substring(start, end);
+    }
+
+    private int palindSpread(char[] arr, int left, int right) {
+        while (left >= 0 && right < arr.length && arr[left] == arr[right]) {
+            left--;
+            right++;
+        }
+        return right - left - 1;
     }
 }
 // leetcode submit region end(Prohibit modification and deletion)
