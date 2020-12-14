@@ -28,20 +28,30 @@
 // Related Topics 数学 动态规划
 // 👍 193 👎 0
 
+import java.util.HashMap;
+
 // leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public boolean checkSubarraySum(int[] nums, int k) {
-        if (nums.length <= 1) {
-            return false;
-        }
-        int[] dp = new int[nums.length];
+        HashMap<Integer, Integer> map = new HashMap<>();
+        // 如果出现0的情况
+        map.put(0, -1);
+        int sum = 0;
+        // 2,5,33,6,7
+        // 只列举了 2,5 2,5,33 缺少了5,33的情况，为什么结果也是正确的？
         for (int i = 0; i < nums.length; i++) {
-            dp[i] = nums[i];
-            for (int j = i + 1; j < nums.length; j++) {
-                dp[j] = dp[j - 1] + nums[j];
-                if ((k == 0 && dp[j] == 0) || (k != 0 && dp[j] % k == 0)) {
+            sum += nums[i];
+            if (k != 0) {
+                sum = sum % k;
+            }
+            if (map.containsKey(sum)) {
+                // 解释：如果该数组存在子数组和为n*k的情况，则必然会出现 sum[i] == sum[j]的情况
+                // 因此不用穷举数组的子数组的所有情况
+                if (i - map.get(sum) > 1) {
                     return true;
                 }
+            } else {
+                map.put(sum, i);
             }
         }
         return false;
