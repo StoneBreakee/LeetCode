@@ -48,34 +48,12 @@ import java.util.HashMap;
 // leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public char findTheDifference(String s, String t) {
-        if (s.length() == 0) {
-            return t.charAt(0);
+        char[] sArr = s.toCharArray(), tArr = t.toCharArray();
+        int result = tArr[tArr.length - 1];
+        for (int i = 0; i < s.length(); i++) {
+            result = result ^ sArr[i] ^ tArr[i];
         }
-        char[] arr = t.toCharArray();
-        HashMap<Character, Integer> map = new HashMap<>(1000);
-        for (int i = 0; i < t.length(); i++) {
-            if (map.containsKey(arr[i])) {
-                map.put(arr[i], map.get(arr[i]) + 1);
-            } else {
-                map.put(arr[i], 1);
-            }
-        }
-        arr = s.toCharArray();
-        for (int i = 0; i < arr.length; i++) {
-            if (map.containsKey(arr[i])) {
-                int count = map.get(arr[i]);
-                if (count == 1) {
-                    map.remove(arr[i]);
-                } else {
-                    map.put(arr[i], count - 1);
-                }
-            } else {
-                return arr[i];
-            }
-        }
-        Character[] result = new Character[1];
-        map.keySet().toArray(result);
-        return result[0];
+        return (char)result;
     }
 }
 // leetcode submit region end(Prohibit modification and deletion)
