@@ -30,6 +30,7 @@
 // Related Topics 动态规划
 // 👍 785 👎 0
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,10 +42,15 @@ class Solution {
         }
         char[] arr = s.toCharArray();
         boolean[] dp = new boolean[arr.length];
-        Set<String> set = wordDict.stream().collect(Collectors.toSet());
+        Set<String> set = new HashSet<>();
+        int maxLen = 0;
+        for (String str : wordDict) {
+            set.add(str);
+            maxLen = maxLen < str.length() ? str.length() : maxLen;
+        }
         for (int i = 0; i < arr.length; i++) {
             dp[i] = set.contains(new String(arr, 0, i + 1));
-            for (int j = i - 1; j >= 0 && !dp[i]; j--) {
+            for (int j = i - 1; j >= 0 && j >= i - maxLen && !dp[i]; j--) {
                 dp[i] = dp[j] && set.contains(new String(arr, j + 1, i - j));
             }
         }
