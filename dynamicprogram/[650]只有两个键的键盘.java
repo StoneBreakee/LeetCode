@@ -30,21 +30,21 @@
 // leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public int minSteps(int n) {
-        int[] dp = new int[n + 1];
-        for (int i = 2; i <= n; i++) {
-            dp[i] = i;
-            boolean zhiShu = true;
-            for (int j = 2; j <= Math.sqrt(i) && zhiShu; j++) {
-                zhiShu = i % j != 0 || i == 2;
+        /**
+         * 理解答案的方法
+         * 本题的终极意义在于n分解，即
+         * n = a * b * c
+         * 这样可以先通过得到c，然后复制c,粘贴c b次，然后复制 b * c,最后复制b * c,粘贴 b * c a次即可得到n个A
+         * */
+        int d = 2, ans = 0;
+        while (n > 1) {
+            while (n % d == 0) {
+                ans += d;
+                n = n / d;
             }
-            for (int j = i / 2; j > 0 && !zhiShu; j--) {
-                if (i % j == 0) {
-                    dp[i] = dp[j] + i / j;
-                    break;
-                }
-            }
+            d++;
         }
-        return dp[n];
+        return ans;
     }
 }
 // leetcode submit region end(Prohibit modification and deletion)
