@@ -33,7 +33,11 @@ class Solution {
         int[] dp = new int[n + 1];
         for (int i = 2; i <= n; i++) {
             dp[i] = i;
-            for (int j = i / 2; j > 0; j--) {
+            boolean zhiShu = true;
+            for (int j = 2; j <= Math.sqrt(i) && zhiShu; j++) {
+                zhiShu = i % j != 0 || i == 2;
+            }
+            for (int j = i / 2; j > 0 && !zhiShu; j--) {
                 if (i % j == 0) {
                     dp[i] = dp[j] + i / j;
                     break;
