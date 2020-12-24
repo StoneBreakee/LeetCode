@@ -32,37 +32,26 @@
 // 返回: 3, A 中有三个子等差数组: [1, 2, 3], [2, 3, 4] 以及自身 [1, 2, 3, 4]。
 //
 // Related Topics 数学 动态规划
-// 👍 167 👎 0
+// 👍 199 👎 0
 
 // leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
-    /**
-     * 暂时没有想到最简化的动态规划
-     * 分为两步
-     * first 先求出该数组连续等差数列的长度，存储到dptbale
-     * second 遍历dptable，求出总和
-     * */
     public int numberOfArithmeticSlices(int[] A) {
-        if (A.length <= 2) {
-            return 0;
-        }
-        int[] dptable = new int[A.length];
+        // dp[i] 表示以第i个元素结尾的等比数列的长度
+        // a[i-1] - a[i-2] == a[i] - a[i-1] => dp[i] = dp[i-1] + 1
+        // 长度为4时
+        //   以第三个为结尾的数列有1个
+        //   以最后一个为结尾的数列有2连个
+        // sum = sum(dp[0],...,dp[n])
+        int[] dp = new int[A.length];
+        int sum = 0;
         for (int i = 2; i < A.length; i++) {
             if (A[i] - A[i - 1] == A[i - 1] - A[i - 2]) {
-                dptable[i] = 3;
-                if (dptable[i - 1] > 0) {
-                    dptable[i] = dptable[i - 1] + 1;
-                }
+                dp[i] = dp[i - 1] + 1;
+                sum += dp[i];
             }
         }
-        int count = 0;
-        for (int i = 2; i < dptable.length; i++) {
-            if (dptable[i] > 0) {
-                dptable[i] = (dptable[i] - 2);
-                count += dptable[i];
-            }
-        }
-        return count;
+        return sum;
     }
 }
 // leetcode submit region end(Prohibit modification and deletion)
