@@ -14,28 +14,29 @@
 //
 // 说明: 你可以假设 n 不小于 2 且不大于 58。
 // Related Topics 数学 动态规划
-// 👍 357 👎 0
+// 👍 419 👎 0
 
 // leetcode submit region begin(Prohibit modification and deletion)
-// num 可以拆分为 j num-j
-// dptable[j] 存储j可拆分后的最大乘积
-// dptable[num-j] 存储num-j可拆分后的最大乘积
-// dptable[num] = Max(max(j,dptable[j]) * max(num-j,dptable[num-j])) 1 <= j <= num
 class Solution {
     public int integerBreak(int n) {
-        int[] dptable = new int[n + 1];
-        dptable[0] = 1;
-        dptable[1] = 1;
-        for (int i = 2; i <= n; i++) {
-            int start = 1;
-            while (start <= i / 2) {
-                int maxStart = Math.max(start, dptable[start]);
-                int maxEnd = Math.max(i - start, dptable[i - start]);
-                dptable[i] = Math.max(maxStart * maxEnd, dptable[i]);
-                start++;
+        if (n == 2) {
+            return 1;
+        }
+        if (n == 3) {
+            return 2;
+        }
+        // dp[i] 表示数字i拆分后得到的最大乘积
+        int[] dp = new int[n + 1];
+        dp[0] = 1;
+        dp[1] = 1;
+        dp[2] = 2;
+        dp[3] = 3;
+        for (int i = 4; i <= n; i++) {
+            for (int j = i / 2; j >= 1; j--) {
+                dp[i] = Math.max(dp[j] * dp[i - j], dp[i]);
             }
         }
-        return dptable[n];
+        return dp[n];
     }
 }
 // leetcode submit region end(Prohibit modification and deletion)
