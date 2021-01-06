@@ -33,19 +33,29 @@ class Solution {
         if (pairs.length <= 1) {
             return pairs.length;
         }
-        Arrays.sort(pairs, (o1, o2) -> o1[0] - o2[0]);
+        Arrays.sort(pairs, (o1, o2) -> {
+            int res = o1[0] - o2[0];
+            if (res == 0) {
+                return o1[1] - o2[1];
+            }
+            return res;
+        });
         int[] dp = new int[pairs.length];
-        int len = 1;
-        for (int i = 0; i < pairs.length; i++) {
-            dp[i] = 1;
-            for (int j = i - 1; j >= 0; j--) {
-                if(pairs[i][0] > pairs[j][1]){
-                    dp[i] = Math.max(dp[i], dp[j] + 1);
+        int[] max = pairs[0];
+        dp[0] = 1;
+        for (int i = 1; i < pairs.length; i++) {
+            dp[i] = dp[i - 1];
+            if (pairs[i][0] > max[1]) {
+                max = pairs[i];
+                dp[i] = dp[i] + 1;
+            } else {
+                // 调整max的最小值
+                if (max[1] > pairs[i][1]) {
+                    max = pairs[i];
                 }
             }
-            len = Math.max(len, dp[i]);
         }
-        return len;
+        return dp[pairs.length - 1];
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
